@@ -1,6 +1,6 @@
 # Campground Availability Checker (WIP)
 
-This project is a Python application that checks the availability of specific campsites on certain dates using data from the Recreation.gov API.
+This project is a Python application that checks the availability of specific campsites on **all fridays and saturdays in June and July** using data from the Recreation.gov API.
 
 ## Project Structure
 
@@ -39,6 +39,3 @@ campgrounds:
   sites: 
   - "002"
   - "004"
-  dates: 
-  - "2024-01-01T00:00:00Z"
-  - "2024-01-02T00:00:00Z"
