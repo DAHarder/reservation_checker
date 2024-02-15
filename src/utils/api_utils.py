@@ -16,8 +16,6 @@ def fetch_campground_data(campground_id:str, month:int, year:int):
 
     headers = {"User-Agent": "Mozilla/5.0"}
 
-    print(API_URL)
-
     response = requests.get(API_URL, headers=headers)
 
     if response.status_code == 200:

@@ -2,24 +2,45 @@
 
 import yaml
 import utils.api_utils as api_utils
+import utils.get_dates as get_dates
 from datetime import datetime
+from collections import defaultdict
+import calendar
+from termcolor import colored
 
-def check_availability():
-    with open('config/settings.yaml', 'r') as file:
+
+
+def check_availability(year):
+    with open('src/config/settings.yaml', 'r') as file:
         settings = yaml.safe_load(file)
+
+    # Get all Fridays and Saturdays of June and July
+    all_dates = get_dates.get_fridays_and_saturdays(year)
 
     for campground in settings['campgrounds']:
         campground_id = campground['id']
-        for date in campground['dates']:
-            # Extract month and year from date
-            date_obj = datetime.strptime(date, "%Y-%m-%dT%H:%M:%S.000Z")
-            month = date_obj.month
-            year = date_obj.year
 
-            # Fetch data
+        print(f"Checking data for {campground}")
+
+        # Group dates by month
+        dates_by_month = defaultdict(list)
+        for date in all_dates:
+            # Extract month and year from date
+            date_obj = datetime.strptime(date, "%Y-%m-%d")
+            dates_by_month[date_obj.month].append(date)
+
+        # Fetch data for each month
+        for month, dates in dates_by_month.items():
             results = api_utils.fetch_campground_data(campground_id, month, year)
             if results:
                 for result in results:
                     if result['site'] in campground['sites']:
-                        if result['quantities'].get(date) == 1:
-                            print(f"Campsite {result['site']} is available on {date}")
+                        for date in dates:
+                            if result['quantities'].get(date + "T00:00:00Z") == 1:
+                                print(f"Campsite {result['site']} is available on {date}")
+                                available = True
+                            else:
+                                available = False
+            if available == False:
+                print(colored(f"No campsites found for {calendar.month_name[month]}", 'red'))
+

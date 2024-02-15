@@ -8,6 +8,7 @@ The project is divided into several modules:
 
 - `main.py`: The entry point of the application.
 - `utils/api_utils.py`: Contains the `fetch_campground_data` function, which fetches data from the API.
+- `utils/get_dates.py`: Contains the `get_dates` function, which fetches all the Friday and Saturday dates for specific months
 - `services/availability_service.py`: Contains the `check_availability` function, which reads the settings from a YAML file and checks the availability of the specified campsites.
 
 ## How to Run the Application
