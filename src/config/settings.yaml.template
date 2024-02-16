@@ -1,0 +1,8 @@
+Example:
+
+campgrounds:
+- id: 232868
+  sites: 
+  - '008'
+  - '016'
+  - '041'
