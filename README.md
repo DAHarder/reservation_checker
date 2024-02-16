@@ -18,8 +18,9 @@ The project is divided into several modules:
     ```bash
     pip install requests.txt
     ```
+2. Rename the settings.yaml.template file to settings.yaml and add in the campgrounds and campsites you want to check
 
-2. Run the main script:
+3. Run the main script:
 
     ```bash
     python main.py
