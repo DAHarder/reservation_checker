@@ -36,13 +36,12 @@ def check_availability(year, config_path='src/config/settings.yaml'):
     if all_dates is None:
         print(colored(f"Error: It's past September in {year}. The camping season (May-September) has ended. Run this next year.", 'red'))
         return
-
+    print ("")
     for campground in settings['campgrounds']:
         campground_id = campground['id']
 
         # Get campground name from ID using the API
         campground_name = api_utils.fetch_campground_name(campground_id)
-
         print(f"Checking data for {campground_name} (ID: {campground_id})")
         print(colored(f"https://www.recreation.gov/camping/campgrounds/{campground_id}", 'yellow'))
 
@@ -67,4 +66,6 @@ def check_availability(year, config_path='src/config/settings.yaml'):
             
             if not month_has_availability:
                 print(colored(f"✗ No campsites found for {calendar.month_name[month]}", 'red'))
-
+        print ("-" * 50)  # Separator for each campground
+    print(colored("Availability check completed.", 'blue'))
+    print("")
