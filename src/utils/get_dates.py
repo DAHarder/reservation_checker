@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 
 def get_fridays_and_saturdays(year, from_date=None):
     """
-    Get all Fridays and Saturdays in June, July, August, and September for the given year.
+    Get all Fridays and Saturdays in May, June, July, August, and September for the given year.
     
     Args:
         year (int): The year to check
@@ -23,10 +23,14 @@ def get_fridays_and_saturdays(year, from_date=None):
     if from_date.year == year and from_date.month > 9:
         return None
     
-    months = [6, 7, 8, 9]  # June, July, August, and September
+    months = [5, 6, 7, 8, 9]  # May, June, July, August, and September
     days = []
 
     for month in months:
+        # Skip months that are in the past
+        if from_date.year == year and month < from_date.month:
+            continue
+            
         # Find out the number of days in the month
         _, num_days = calendar.monthrange(year, month)
 

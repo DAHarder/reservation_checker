@@ -34,7 +34,7 @@ def check_availability(year, config_path='src/config/settings.yaml'):
     
     # Check if we're past the camping season (past September)
     if all_dates is None:
-        print(colored(f"Error: It's past September in {year}. The camping season (June-September) has ended.", 'red'))
+        print(colored(f"Error: It's past September in {year}. The camping season (May-September) has ended. Run this next year.", 'red'))
         return
 
     for campground in settings['campgrounds']:
@@ -44,7 +44,7 @@ def check_availability(year, config_path='src/config/settings.yaml'):
         campground_name = api_utils.fetch_campground_name(campground_id)
 
         print(f"Checking data for {campground_name} (ID: {campground_id})")
-        print(colored(f"https://www.recreation.gov/camping/campsites/{campground_id}", 'yellow'))
+        print(colored(f"https://www.recreation.gov/camping/campgrounds/{campground_id}", 'yellow'))
 
         # Group dates by month
         dates_by_month = defaultdict(list)
