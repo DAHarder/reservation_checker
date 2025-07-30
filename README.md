@@ -1,42 +1,40 @@
-# Campground Availability Checker (WIP)
+# Campground Availability Checker
 
-This project is a Python application that checks the availability of specific campsites on **all fridays and saturdays in June and July** using data from the Recreation.gov API.
+A Python tool that checks campsite availability on weekends (Fridays and Saturdays) for all months until end of September using the Recreation.gov API.
 
-## Project Structure
+## Quick Start
 
-The project is divided into several modules:
+1. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-- `main.py`: The entry point of the application.
-- `utils/api_utils.py`: Contains the `fetch_campground_data` function, which fetches data from the API.
-- `utils/get_dates.py`: Contains the `get_dates` function, which fetches all the Friday and Saturday dates for specific months
-- `services/availability_service.py`: Contains the `check_availability` function, which reads the settings from a YAML file and checks the availability of the specified campsites.
+2. Create your configuration:
+   ```bash
+   cp src/config/settings.yaml.template src/config/settings.yaml
+   ```
 
-## How to Run the Application
+3. Edit `src/config/settings.yaml` with your desired campgrounds and sites
 
-1. Install the required Python packages:
-
-    ```bash
-    pip install requests.txt
-    ```
-2. Rename the settings.yaml.template file to settings.yaml and add in the campgrounds and campsites you want to check
-
-3. Run the main script:
-
-    ```bash
-    python main.py
-    ```
+4. Run the checker:
+   ```bash
+   python src/main.py
+   ```
 
 ## Configuration
 
-The application's settings are defined in the `config/settings.yaml` file. 
-
-This file should contain a list of campgrounds, each with an id, a list of site numbers, and a list of dates. The application will check the availability of each site on each date.
-
-Here's an example of what the settings file might look like:
+Create `src/config/settings.yaml` with your campground details:
 
 ```yaml
 campgrounds:
-- id: 233870
+- id: 232868
   sites: 
-  - "002"
-  - "004"
+  - '008'
+  - '016'
+  - '041'
+```
+
+## Flag Options
+
+- `--year YYYY` - Check availability for a specific year (default: current year)
+- `--config PATH` - Use a different config file
