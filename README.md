@@ -36,5 +36,4 @@ campgrounds:
 
 ## Flag Options
 
-- `--year YYYY` - Check availability for a specific year (default: current year)
 - `--config PATH` - Use a different config file
