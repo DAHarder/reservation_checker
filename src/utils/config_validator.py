@@ -1,7 +1,23 @@
-# utils/config_validator.py - Validates configuration settings
+"""Configuration validation utilities."""
 
-def validate_settings(settings):
-    """Validate the settings configuration."""
+import logging
+from typing import Any, Dict
+
+logger = logging.getLogger("reservation_checker")
+
+
+def validate_settings(settings: Dict[str, Any]) -> bool:
+    """Validate the settings configuration.
+    
+    Args:
+        settings: The settings dictionary to validate
+        
+    Returns:
+        True if validation passes
+        
+    Raises:
+        ValueError: If validation fails
+    """
     if not settings:
         raise ValueError("Settings cannot be empty")
     
@@ -27,4 +43,5 @@ def validate_settings(settings):
         if not campground['sites']:
             raise ValueError(f"Campground {i} must have at least one site")
     
+    logger.info(f"Configuration validation passed: {len(settings['campgrounds'])} campground(s)")
     return True

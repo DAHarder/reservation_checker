@@ -1,32 +1,55 @@
-# services/availability_service.py - This module contains business logic. In your case, it could contain a function that reads the data from settings.yaml and uses fetch_campground_data to check whether specific camp/site/date combinations are available.
+"""Business logic for checking campground availability."""
+
+import calendar
+import logging
+from collections import defaultdict
+from datetime import datetime
+from typing import Dict, List, Optional
 
 import yaml
-import utils.api_utils as api_utils
-import utils.get_dates as get_dates
-import utils.config_validator as config_validator
-from datetime import datetime
-from collections import defaultdict
-import calendar
 from termcolor import colored
 
+import utils.api_utils as api_utils
+import utils.config_validator as config_validator
+import utils.get_dates as get_dates
+
+# Constants
+CAMPING_MONTHS = [5, 6, 7, 8, 9]  # May through September
+WEEKEND_DAYS = [4, 5]  # Friday and Saturday
+
+logger = logging.getLogger("reservation_checker")
 
 
-def check_availability(year, config_path='src/config/settings.yaml'):
+
+def check_availability(year: int, config_path: str = 'config/settings.yaml') -> None:
+    """Check campground availability for the specified year.
+    
+    Args:
+        year: The year to check availability for
+        config_path: Path to the settings YAML file
+    """
     try:
         with open(config_path, 'r') as file:
             settings = yaml.safe_load(file)
         
         # Validate configuration
         config_validator.validate_settings(settings)
+        logger.info(f"Configuration loaded from {config_path}")
         
     except FileNotFoundError:
-        print(colored("Error: settings.yaml file not found. Please copy settings.yaml.template to settings.yaml and configure it.", 'red'))
+        error_msg = "Error: settings.yaml file not found. Please copy settings.yaml.template to settings.yaml and configure it."
+        logger.error(error_msg)
+        print(colored(error_msg, 'red'))
         return
     except yaml.YAMLError as e:
-        print(colored(f"Error reading settings.yaml: {e}", 'red'))
+        error_msg = f"Error reading settings.yaml: {e}"
+        logger.error(error_msg)
+        print(colored(error_msg, 'red'))
         return
     except ValueError as e:
-        print(colored(f"Configuration error: {e}", 'red'))
+        error_msg = f"Configuration error: {e}"
+        logger.error(error_msg)
+        print(colored(error_msg, 'red'))
         return
 
     # Get all Fridays and Saturdays from today through end of September
@@ -34,11 +57,16 @@ def check_availability(year, config_path='src/config/settings.yaml'):
     
     # Check if we're past the camping season (past September)
     if all_dates is None:
-        print(colored(f"Error: It's past September in {year}. The camping season (May-September) has ended. Run this next year.", 'red'))
+        error_msg = f"Error: It's past September in {year}. The camping season (May-September) has ended. Run this next year."
+        logger.warning(error_msg)
+        print(colored(error_msg, 'red'))
         return
-    print ("")
+    
+    logger.info(f"Found {len(all_dates)} weekend dates to check")
+    print("")
     for campground in settings['campgrounds']:
         campground_id = campground['id']
+        logger.info(f"Checking campground ID: {campground_id}")
 
         # Get campground name from ID using the API
         campground_name = api_utils.fetch_campground_name(campground_id)
@@ -61,11 +89,15 @@ def check_availability(year, config_path='src/config/settings.yaml'):
                     if result['site'] in campground['sites']:
                         for date in dates:
                             if result['quantities'].get(date + "T00:00:00Z") == 1:
-                                print(colored(f"✓ Campsite {result['site']} is available on {date}", 'green'))
+                                msg = f"✓ Campsite {result['site']} is available on {date}"
+                                logger.info(f"Available: {campground_id} - {result['site']} - {date}")
+                                print(colored(msg, 'green'))
                                 month_has_availability = True
             
             if not month_has_availability:
                 print(colored(f"✗ No campsites found for {calendar.month_name[month]}", 'red'))
-        print ("-" * 50)  # Separator for each campground
+        print("-" * 50)  # Separator for each campground
+    
+    logger.info("Availability check completed")
     print(colored("Availability check completed.", 'blue'))
     print("")

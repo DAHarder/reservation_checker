@@ -1,10 +1,21 @@
-# utils/logger.py - Simple logging configuration
+"""Logging configuration for the application."""
 
 import logging
+import os
 from datetime import datetime
+from pathlib import Path
 
-def setup_logger(name="reservation_checker", level=logging.INFO):
-    """Set up logger with console and file output."""
+
+def setup_logger(name: str = "reservation_checker", level: int = logging.INFO) -> logging.Logger:
+    """Set up logger with console and file output.
+    
+    Args:
+        name: The logger name
+        level: The logging level
+        
+    Returns:
+        Configured logger instance
+    """
     logger = logging.getLogger(name)
     logger.setLevel(level)
     
@@ -12,12 +23,15 @@ def setup_logger(name="reservation_checker", level=logging.INFO):
     if logger.handlers:
         return logger
     
-    # Console handler
+    # Console handler - only show errors
     console_handler = logging.StreamHandler()
-    console_handler.setLevel(level)
+    console_handler.setLevel(logging.ERROR)
     
-    # File handler
-    log_filename = f"logs/reservation_checker_{datetime.now().strftime('%Y%m%d')}.log"
+    # File handler - create logs directory if it doesn't exist
+    logs_dir = Path("logs")
+    logs_dir.mkdir(exist_ok=True)
+    
+    log_filename = logs_dir / f"reservation_checker_{datetime.now().strftime('%Y%m%d')}.log"
     file_handler = logging.FileHandler(log_filename)
     file_handler.setLevel(level)
     
