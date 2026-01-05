@@ -6,6 +6,10 @@ from typing import Dict, List, Optional
 from urllib.parse import urlencode
 
 import requests
+import urllib3
+
+# Disable SSL warnings when verify=False is used
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # Constants
 RECREATION_GOV_API_BASE = "https://www.recreation.gov/api/camps"
@@ -35,7 +39,7 @@ def fetch_campground_name(campground_id: str) -> str:
     headers = {"User-Agent": USER_AGENT}
 
     try:
-        response = requests.get(api_url, headers=headers, timeout=API_TIMEOUT)
+        response = requests.get(api_url, headers=headers, timeout=API_TIMEOUT, verify=False)
         
         if response.status_code == 200:
             data = response.json()
@@ -85,9 +89,9 @@ def fetch_campground_data(campground_id: str, month: int, year: int) -> Optional
     headers = {"User-Agent": USER_AGENT}
 
     logger.debug(f"Fetching data for campground {campground_id}, month {month}/{year}")
-    
+
     try:
-        response = requests.get(api_url, headers=headers, timeout=API_TIMEOUT)
+        response = requests.get(api_url, headers=headers, timeout=API_TIMEOUT, verify=False)
         
         if response.status_code == 200:
             data = response.json()
@@ -99,10 +103,12 @@ def fetch_campground_data(campground_id: str, month: int, year: int) -> Optional
                 campsite_id = campsite["campsite_id"]
                 site = campsite["site"]
                 quantities = campsite["quantities"]
+                availabilities = campsite.get("availabilities", {})
                 result = {
                     "campsite_id": campsite_id,
                     "site": site,
-                    "quantities": quantities
+                    "quantities": quantities,
+                    "availabilities": availabilities
                 }
                 results.append(result)
             

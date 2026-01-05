@@ -88,7 +88,12 @@ def check_availability(year: int, config_path: str = 'config/settings.yaml') -> 
                 for result in results:
                     if result['site'] in campground['sites']:
                         for date in dates:
-                            if result['quantities'].get(date + "T00:00:00Z") == 1:
+                            date_key = date + "T00:00:00Z"
+                            availability_status = result['availabilities'].get(date_key)
+
+                            # Only show as available if status is "Available"
+                            # This filters out "NYR" (Not Yet Released), "Reserved", etc.
+                            if availability_status == "Available":
                                 msg = f"✓ Campsite {result['site']} is available on {date}"
                                 logger.info(f"Available: {campground_id} - {result['site']} - {date}")
                                 print(colored(msg, 'green'))
