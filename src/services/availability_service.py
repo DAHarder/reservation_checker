@@ -87,7 +87,11 @@ def check_availability(year: int, config_path: str = 'config/settings.yaml') -> 
             results = api_utils.fetch_campground_data(campground_id, month, year)
             if results:
                 for result in results:
-                    if result['site'] in campground['sites']:
+                    # Normalize site numbers for comparison (remove leading zeros)
+                    result_site_normalized = result['site'].lstrip('0') or '0'
+                    configured_sites_normalized = [site.lstrip('0') or '0' for site in campground['sites']]
+
+                    if result_site_normalized in configured_sites_normalized:
                         for date in dates:
                             date_key = date + "T00:00:00Z"
                             availability_status = result['availabilities'].get(date_key)
