@@ -84,6 +84,7 @@ def check_availability(year: int, config_path: str = 'config/settings.yaml') -> 
         for month, dates in dates_by_month.items():
             month_has_availability = False
             month_has_nyr = False
+            month_header_printed = False
             results = api_utils.fetch_campground_data(campground_id, month, year)
             if results:
                 for result in results:
@@ -99,6 +100,10 @@ def check_availability(year: int, config_path: str = 'config/settings.yaml') -> 
                             # Only show as available if status is "Available"
                             # This filters out "NYR" (Not Yet Released), "Reserved", etc.
                             if availability_status == "Available":
+                                # Print month header before first available site
+                                if not month_header_printed:
+                                    print(f"\n{calendar.month_name[month]}:")
+                                    month_header_printed = True
                                 msg = f"✓ Campsite {result['site']} is available on {date}"
                                 logger.info(f"Available: {campground_id} - {result['site']} - {date}")
                                 print(colored(msg, 'green'))
