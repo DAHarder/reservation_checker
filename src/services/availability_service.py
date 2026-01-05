@@ -83,6 +83,7 @@ def check_availability(year: int, config_path: str = 'config/settings.yaml') -> 
         # Fetch data for each month
         for month, dates in dates_by_month.items():
             month_has_availability = False
+            month_has_nyr = False
             results = api_utils.fetch_campground_data(campground_id, month, year)
             if results:
                 for result in results:
@@ -98,9 +99,14 @@ def check_availability(year: int, config_path: str = 'config/settings.yaml') -> 
                                 logger.info(f"Available: {campground_id} - {result['site']} - {date}")
                                 print(colored(msg, 'green'))
                                 month_has_availability = True
-            
+                            elif availability_status == "NYR":
+                                month_has_nyr = True
+
             if not month_has_availability:
-                print(colored(f"✗ No campsites found for {calendar.month_name[month]}", 'red'))
+                if month_has_nyr:
+                    print(colored(f"✗ No campsites available for {calendar.month_name[month]} (some dates not yet released)", 'red'))
+                else:
+                    print(colored(f"✗ No campsites found for {calendar.month_name[month]}", 'red'))
         print("-" * 50)  # Separator for each campground
     
     logger.info("Availability check completed")
